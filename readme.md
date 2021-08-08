@@ -1,6 +1,6 @@
 TUBBY'S GUIDE TO ALL THINGS PORTAL 2 EXTERNAL MODDING
 
-<Before we start, i will go through some 'alternitive' options for executing commands and editing console variables in Portal 2>
+<Before we start, i will go through some 'alternative' options for executing commands and editing console variables in Portal 2>
 
 1: The .cfg method
 
@@ -9,10 +9,10 @@ to set binds before it can funtion, and it's limited to only game developer cons
 
 this method involves setting a bind in the portal 2 developer console (accesable by the ` key, you must enable in settings)
 this bind sets an uncommon key to be used during gameplay to execute a .cfg file in console.
-(the bind used in previous versions of portal 2 chaos = "'bind ] "exex chaos.cfg"')
+(the bind used in previous versions of portal 2 chaos = "'bind ] "exec chaos.cfg"')
 
 this relies on the fact that portal 2, and all (or most) of source engine games have an 'exec' console command,
-that runsa .cfg file.
+that runs a .cfg file.
 
 a .cfg file is just a list of console commands to run upon execution, and is just in the format of a text file.
 .cfg files are used in source games, usually in the form of an autoexec.cfg file, this file automatically executes on the games launch
@@ -43,13 +43,14 @@ cons:
     general jankiness
 
 
+
 2: the netconsole method
 
 this is the middle ground of all the methods
 this requires for portal 2 to be launched with the "-netconport <port>" launch argument via steam, meaning the 1st time installation 
 is more complicated.
 
-this method uses the source engine's net console feature, essentually allowing for clients to connect to the source console via TelNet.
+this method uses the source engine's net console feature, essentially allowing for clients to connect to the source console via TelNet.
 this means they have full access to console using networking.
 
 to get setup:
@@ -77,7 +78,7 @@ cons:
 
 Getting onto the real implementation of portal 2 chaos: the Direct memory hacking method.
 
-this decumentation should go through basic game hacking ideas and implementations, such as offsets, how to find them, and how to use them, 
+this documentation should go through basic game hacking ideas and implementations, such as offsets, how to find them, and how to use them, 
 accessing memory of the game, and hooking into the game externally.
 
 a majority of this code will be ripped from my previous adventure into the cs:go cheat development scene.
@@ -97,10 +98,10 @@ int main()
 
 at first, we need to get the 'HWND' of Portal 2, a 'HWND' stands for the 'Handle to the window', allowing usto access the window.
 
-to do this, werun a simple 'FindWindowA()' command.
-FindWindowA requires a 'class name'and a 'window name', theclass name we can leave as null (NULL in c++),and for the window name, "PORTAL 2 - Direct3D 9"
+to do this, we run a simple 'FindWindowA()' command.
+FindWindowA requires a 'class name'and a 'window name', the class name we can leave as null (NULL in c++),and for the window name, "PORTAL 2 - Direct3D 9"
 the window name may change based on game settings ect, so make sure to equate for that in your code.
-FindWindowA returns the 'HWND' of the window, we canmake this into a global variable for the restof the methods to use.
+FindWindowA returns the 'HWND' of the window, we can make this into a global variable for the restof the methods to use.
 
 the next thing we need is the process ID, that we can get with the function 'GetWindowThreadProcessId'
 GetWindowThreadProcessId requires a HWNDof a window, of which, we can just use the HWND we received from the FindWindowA above,
@@ -125,7 +126,7 @@ uintptr_t GetModuleBaseAddress(const char* modName) {
 	}
 }
 
-then make a global uintptr_t called module base, which is assignedthe value of "GetModuleBaseAddress("client.dll")"
+then make a global uintptr_t called module base, which is assigned the value of "GetModuleBaseAddress("client.dll")"
 
 this allows us to access variables within the client.dll, including all of the console variables.
 
@@ -135,12 +136,12 @@ assign this to a global HANDLE variable.
 
 from here on, we can use ReadProcessMemory, and WriteProcessMemory to read and write to memory within the game, such as the players' FOV, fps_max, and any other console variable.
 
-from this method, there is no need for any other installation steps by the user, as even things such as sv_cheats 1 canbe edited automatically.
-However, to edit console variables, andother values, you need whatis called an 'offset'
+from this method, there is no need for any other installation steps by the user, as even things such as sv_cheats 1 can be edited automatically.
+However, to edit console variables, and other values, you need what is called an 'offset'
 and offset is used to show the location in memory where we can read/write to find the specific variable.
 
 as an example, the offset for the FOV variable is: 0xA04C54
-therefore, thelocation in memory would be: (modulebase + 0xA04v54).
+therefore, the location in memory would be: (modulebase + 0xA04v54).
 
 to access this in c++, we can use the ReadProcessMemory function, 
 we pass to ReadProcessMemory :
@@ -153,10 +154,10 @@ NULL          : fill in unused arguments.
 this should output the value of the FOV (r other offset's) console variable/value.
 
 
-to write to the memory, to edit console variablesand other values, you must use 'WriteProcessMemory'
+to write to the memory, to edit console variables and other values, you must use 'WriteProcessMemory'
 
 WriteProcessMemory is almost the same as ReadProcessMemory, however instead of the buffer being written to, the buffer is being read from,
-with the 'buffer' including the newwanted value of the value being written.
+with the 'buffer' including the new wanted value of the value being written.
 
 as an example of both of these functions, this is a function that reads current FOV, then sets fov to +1, increasing the FOV by 1:
 
@@ -172,16 +173,16 @@ to add additional console variables, you need to find the offset of the variable
 
 this is not a cheat engine tutorial, however you will only need a basic knowledge of cheat engine:
 
-i would reccomend watching this Guided Hacking video: https://www.youtube.com/watch?v=Nib69uZJCaA&ab_channel=GuidedHacking
+i would recommend watching this Guided Hacking video: https://www.youtube.com/watch?v=Nib69uZJCaA&ab_channel=GuidedHacking
 
-after you have the variable in your cheat table, you need to aquire the offset. cheatengine supplies this under the 'Address' column on the cheat table.
+after you have the variable in your cheat table, you need to acquire the offset. cheat engine supplies this under the 'Address' column on the cheat table.
 
 to translate this offset into an offset you can use in your code: you need to do a few things:
 
 you need to know whether or not the variable is within the client.dll, you can find this out by clicking on the 'address' variable on your cheat table entry,
-if the 'address' field in the popup window has a 'cliend.dll + ' in it, your variable iswithin the client.dll
+if the 'address' field in the popup window has a 'cliend.dll + ' in it, your variable is within the client.dll
 
-you then need to copy this address, excluding the client.dll.youcanthen import then inyou your source c++ file in either anincluded header file or the cppfile,
+you then need to copy this address, excluding the client.dll.you can then import then in you your source c++ file in either an included header file or the cpp file,
 by using #define.
 
 for example: 
@@ -194,6 +195,6 @@ as you figured out above, you should know if your variable is within client.dll,
 
 you can now find, read, and write console variables completely externally.
 
-i'm working on documenting and dumping all of the offsets for portal 2 and uploadingthem for people to see on my github: https://github.com/Taob-arch
+i'm working on documenting and dumping all of the offsets for portal 2 and uploading them for people to see on my github: https://github.com/Taob-arch
 
-if you want to help, you can tryandfind any offset i haven't found and submit it to my github :)
+if you want to help, you can try and find any offset i haven't found and submit it to my github :)
